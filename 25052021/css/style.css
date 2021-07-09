@@ -1,0 +1,274 @@
+.cardsContainer{
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	margin: 0 auto;
+}
+.outsideBlock{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 40px;
+    background-color: white;
+    border-radius: 10px;
+
+}
+.block{
+	display: flex;
+	padding: 20px;
+	height: 250px;
+	flex-direction: row;
+}
+.numbers{
+	width: 67px;
+	height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+.logo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30%;
+}
+.company:hover a{
+    color: blue;
+}
+.cont{
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	padding: 20px 36px 20px 16px;
+}
+.cont a{
+	color: #000;
+    font-family: Helvetica,sans-serif;
+    font-size: 30px;
+    font-weight: 500;
+    text-decoration: none;
+}
+.spans{
+	margin-top: 15px;
+	height: 70px;
+    display: flex;
+    flex-wrap: wrap;
+}
+.spans span{
+    margin-right: 16px;
+    margin-bottom: 6px;
+}
+.spans img{
+	margin-right: 8px;
+	width: 12px;
+	height: 12px;
+}
+.showMore{
+	margin-top: 20px;
+}
+
+.noneBlock{
+	display: none;
+}
+.insideShowBlock{
+	padding-left: 200px;
+	padding-right: 70px;
+	display: flex;
+	flex-direction: column;
+}
+.showBlock a{
+	text-decoration: none;
+	color: black;
+	margin-right: 10px;
+    flex-wrap: wrap;
+}
+.services{
+	flex-wrap: wrap;
+}
+.services a{
+    margin-right: 15px;
+    margin-bottom: 5px;
+}
+.insideShowBlock div{
+	flex-wrap: wrap;
+	margin-bottom: 15px;
+}
+.insideShowBlock h3{
+	opacity: .4;
+    color: #000;
+    font-family: Helvetica,sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.mobileSpans{
+	display: none;
+}
+.showMoreBTN{
+	display: none;
+}
+@media (max-width: 992px) {
+  .block{
+		height: 270px;
+		padding: 0;
+	}
+	.showMore{
+		margin-top: 15px;
+	}
+	.insideShowBlock{
+	padding-left: 100px;
+	padding-right: 70px;
+	display: flex;
+	flex-direction: column;
+    }
+    .spans{
+    	height: 90px;
+    }
+}
+@media (max-width: 768px) {
+    
+     .block{
+		height: 50px;
+		justify-content: center;
+	}
+	.showMore,.numbers{
+		display: none;
+	}
+	.showMoreBTN{
+		display: flex;
+		justify-content: flex-end;
+        margin-top: 10px;
+	}
+	.showMoreBTN img{
+		width: 30px;
+        height: 30px;
+        border: 1px solid rgb(128, 128, 128, 0.3);
+        transition: 0.5s;
+        padding: 5px;
+	}
+	.showMoreBTN img:hover{
+        border: 1px solid rgb(128, 128, 128, 0.6);
+	}
+	.insideShowBlock{
+		padding: 0px;
+	display: flex;
+	margin-top: 10px;
+	flex-direction: column;
+    }
+    .logo{
+    	width: 110px;
+    	display: flex;
+    	height: inherit;
+    }
+    .logo img{
+    	width: 110px;
+    }
+    .cont{
+    	margin-left: 30px;
+        padding: 0px 0px 0px 0px;
+        justify-content: center;
+    }
+    .outsideBlock{
+    	padding: 15px;
+    }
+    .spans{
+    	display: none;
+    	height: 60px;
+    }
+    .mobileSpans{
+    	display: block;
+    	flex-direction: row;
+    	flex-wrap: wrap;
+    	margin-top: 10px;
+    	height: 70px;
+    }
+    .mobileSpans span{
+    	margin-right: 16px;
+        margin-bottom: 6px;
+    }
+    .mobileSpans span img{
+    	margin-right: 5px;
+    }
+    .cont a{
+    	font-size:25px ;
+    }
+    .servicesInside{
+    	padding-left: 15px;
+    }
+    .clients p{
+    	padding-left: 15px!important;
+    }
+    .cmsInside{
+    	padding-left: 15px;
+    }
+}
+
+
+
+
+@media(max-width: 576px){
+	.showMore{
+		margin-top: 5px;
+	}
+	.insideShowBlock{
+    padding-bottom: 20px;
+	display: flex;
+	flex-direction: column;
+    }
+     .spans{
+    	width: 100%;
+    }
+    .cont a{
+    	font-size: 20px;
+    }
+    .mobileSpans{
+    	height: 70px;
+    }
+    .cms,.services,.clients{
+    	padding-left: 0px;
+    }
+    .servicesInside{
+    	padding-left: 15px;
+    }
+    .clients p{
+    	padding-left: 15px!important;
+    }
+    .cmsInside{
+    	padding-left: 15px;
+    }
+}
+@media(max-width: 470px){
+	.logo img{
+		width: 110px;
+	}
+	.mobileSpans{
+    	height: 90px;
+    }
+	.showMore{
+		margin-top: 5px;
+	}
+	.insideShowBlock{
+    padding-bottom: 10px;
+	display: flex;
+	flex-direction: column;
+    }
+    .cont a{
+    	font-size: 18px;
+    }
+    .cont{
+    	margin-left: 10px;
+    }
+    .cms,.services,.clients{
+    	padding-left: 0px;
+    }
+    .servicesInside{
+    	padding-left: 15px;
+    }
+    .clients p{
+    	padding-left: 15px!important;
+    }
+    .cmsInside{
+    	padding-left: 15px;
+    }
+}

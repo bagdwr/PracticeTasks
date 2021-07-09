@@ -1,0 +1,78 @@
+jQuery.fn.moreNav = function() {
+    var nav = jQuery(this);
+    var savedNavHTML = nav.html();
+
+    function initDropdownLeft() {
+    }
+
+    function setMoreNav() {
+
+        var nav_width = nav.outerWidth(),
+            nav_elem_width = 0,
+            more_link = jQuery('<li class="more"><a href="#more">' +
+                (jQuery(window).width() > 992 ? window.TRANSLATION_MORE_MENU : window.TRANSLATION_MENU +
+                    "<i class='material-icons'>keyboard_arrow_down</i>")
+                + '</a><ul></ul></li>'),
+            class_nav_item = 'nav-item',
+            class_nav_item_more = 'nav-item-more';
+        nav.html(savedNavHTML);
+        window.hoverMenu();
+
+        initDropdownLeft();
+
+        jQuery.each(nav.find('li'), function(i, elem){
+            var elem_width = jQuery(elem).outerWidth();
+
+            nav_elem_width += elem_width;
+        });
+
+        if( nav_elem_width > nav_width ) {
+            nav.append(more_link);
+            nav_width -= more_link.outerWidth();
+
+            nav_elem_width = 0;
+
+            initDropdownLeft();
+
+            jQuery.each(nav.find('> li'), function(i, elem){
+                var elem_width = jQuery(elem).outerWidth();
+
+                nav_elem_width += elem_width;
+
+                if(!jQuery(elem).is('.more') ) {
+                    if(!jQuery(elem).parents("ul").hasClass("nav-child")) {
+                        if( nav_elem_width < nav_width ) {
+                            jQuery(elem).addClass(class_nav_item).removeClass(class_nav_item_more);
+                        } else {
+                            jQuery(elem).addClass(class_nav_item_more).removeClass(class_nav_item);
+                        }
+                    }
+
+                }
+            });
+        }
+
+        if(jQuery(window).width() <= 992) {
+            jQuery(nav).find("> li:not(.more)").addClass(class_nav_item_more).removeClass(class_nav_item);
+            if(nav.find("li.more").length === 0) {
+                nav.append(more_link);
+            }
+        }
+
+        jQuery('.' + class_nav_item_more).each(function() {
+            if(!jQuery(this).parents("ul").hasClass("nav-child")) {
+                more_link.find('ul').append(jQuery(this));
+            }
+
+            jQuery(more_link).find(".nav-child > li.nav-item-more").detach();
+        })
+
+        window.hoverMenu();
+
+    }
+    let resize = function() {
+        setMoreNav();
+    };
+    jQuery(window).resize(resize);
+    resize();
+};

@@ -1,0 +1,104 @@
+jQuery(document).ready(function() {
+    const relaunchForm = function() {
+        const formContainer = jQuery(".ajax-form");
+        let submitFunction = function(form, e, recaptchaToken) {
+            if(!jQuery(form).data('_validate')()) return false;
+            e.preventDefault();
+            const action = form.attr("action");
+            const method = form.attr("method");
+            const data = form.serializeArray();
+            data.push({"name": "recaptcha_token", "value": recaptchaToken});
+
+            if(jQuery(form).find(".is-loading, .is-invalid").length !== 0) {
+                return false;
+            }
+
+            jQuery.ajax({
+                url: action,
+                method: method,
+                data: data,
+                beforeSend: function() {
+                    form.find("button[type='submit']").prop("disabled", true).addClass("disabled");
+                },
+                success: function(data) {
+                    const isError = (typeof data.error_text !== "undefined");
+
+                    if(isError) {
+                        form[0].reportValidity();
+                        return false;
+                    }
+                    form.find("button[type='submit']").prop("disabled", false).removeClass("disabled");
+                    const html = jQuery(form).parents(".modal-content").html();
+                    const modal = jQuery(form).parents(".modal");
+                    jQuery(form).parents(".modal-content").find(".modal__header").html(window.TRANSLATION_RESULT_MODAL_TITLE);
+                    jQuery(form).parents(".modal-content").find(".modal__body").html(form.find("span.result-text").text());
+
+                    jQuery(modal).on("hide.bs.modal", function() {
+                        const this_cl = this;
+                        setTimeout(function () {
+                            jQuery(this_cl).find(".modal-content").html(html);
+                            relaunchForm();
+                            //window.captchaCallbacks.forEach(value => value());
+                        }, 300);
+                    });
+                }
+            })
+        }
+
+        formContainer.each(function() {
+            const form = jQuery(this);
+            form.off("submit");
+			form.data("_captchaSubmit", function() {});
+            form[0].querySelectorAll("input:not([type='email'])").forEach(obj => {
+                obj.addEventListener("input", function() {
+                    if(this.value === "") return false;
+                    this.value = this.value[0].toUpperCase() + this.value.slice(1);
+                })
+            });
+
+            form.on('submit', function (e) {
+                e.preventDefault();
+                grecaptcha.execute(window.recaptcha_site_key, {action: 'submit'}).then(function(token) {
+                    submitFunction(form, e, token);
+                });
+            });
+        });
+        jQuery("form").each(function() {
+            let self = this;
+            jQuery(this).attr("novalidate", true);
+            jQuery(this).data("_validate", function() {
+                jQuery(self).find("input:not([type='hidden']), textarea").trigger("change");
+                return jQuery(self).find("input:not([type='hidden']).is-invalid, textarea.is-invalid").length === 0;
+            });
+            jQuery(this).find("input:not([type='hidden']), textarea").each(function() {
+                const formGroupInput = jQuery(this).parent();
+                const input = jQuery(this);
+                let feedbackElement = null;
+                let validate = function() {
+                    if(input.attr("required") !== undefined) {
+                        if(jQuery.trim(input.val()).length === 0) {
+                            input.addClass("is-invalid");
+                            feedbackElement.html(window.REQUIRED_FIELD_TRANSLATION);
+                        } else {
+                            input.removeClass("is-invalid");
+                        }
+                    }
+                }
+
+                if(formGroupInput.find(".invalid-feedback").length === 0) {
+                    formGroupInput.append('<div class="invalid-feedback"></div>');
+                }
+
+                feedbackElement = formGroupInput.find(".invalid-feedback");
+
+                jQuery(this).off("change");
+                jQuery(this).change(validate);
+            });
+        });
+    };
+
+    grecaptcha.ready(function() {
+        relaunchForm();
+    });
+
+})

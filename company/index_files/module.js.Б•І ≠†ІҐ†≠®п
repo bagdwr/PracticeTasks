@@ -1,0 +1,116 @@
+jQuery(document).ready(function() {
+    window.ajaxGridAjaxBusy = false;
+    jQuery(".ajax-grid:not(.inited)").each(function() {
+        jQuery(this).addClass("inited");
+        const self = this;
+        const enabledPagination = jQuery(this).attr("data-enabled-pagination");
+        const module_id = jQuery(this).data("module_id");
+        const disableLightbox = jQuery(this).attr("data-without-lightbox") === "1";
+
+        jQuery(this).find(".ajax-navigate__active").click(function() {
+            if(jQuery(this).parent().find("ul").is(":visible")) {
+                jQuery(this).parent().find("ul").slideUp(300);
+            } else {
+                jQuery(this).parent().find("ul").slideDown(300);
+            }
+        });
+
+        jQuery(window).resize(function () {
+            if(jQuery(window).width() > 992) {
+                jQuery(self).find("ul").removeAttr("style");
+            }
+        })
+
+        jQuery(this).find(".tab-pane").each(function() {
+            const tabContent = jQuery(this);
+            const loader = tabContent.find(".loader__icon");
+            const itemTemplate = `<%tag_start% class="portfolio__card" %href%>
+                <div class="portfolio__block">
+                    <div class="portfolio__img">
+                        <img src="%image%">
+                    </div>
+                </div>
+            </%tag_end%>`;
+
+            let offset = jQuery(this).attr("data-offset");
+            let loaded = jQuery(this).find(".ajax__items").find(".portfolio__card").length !== 0;
+            let reachedEnd = (jQuery(this).attr("data-reached-end") === "true");
+
+            const load = function(navItem) {
+                let callback = function() {
+                    jQuery.ajax({
+                        "url": "/index.php?option=com_ajax&module=image_list&method=getNext&format=json",
+                        "data": {
+                            module_id: module_id,
+                            offset: offset
+                        },
+                        beforeSend: function() {
+                            window.ajaxGridAjaxBusy = true;
+                            loader.fadeIn(300);
+                        },
+                        success: function(data) {
+                            data = JSON.parse(data);
+                            if(data.result.length === 0 && !loaded) {
+                                loader.hide();
+                                tabContent.find(".ajax__items").html("<span class='empty'>" + window.AJAX_GRID_NOT_FOUND_TEXT + "</span>");
+                                return;
+                            }
+                            if(!loaded) {
+                                loaded = true;
+                            }
+                            let iter = 0;
+
+                            offset = data['nextOffset'];
+
+                            if(data.result.length === 0 ) {
+                                window.ajaxGridAjaxBusy = false;
+                                loaded = true;
+                                reachedEnd = data.isReachedEnd;
+                                loader.fadeOut(300);
+                                return false;
+                            }
+
+                            reachedEnd = data.isReachedEnd;
+
+                            for(let i = 0; i < (data.result.length); i++) {
+                                const items = data.result;
+
+                                jQuery(tabContent).find(".ajax__items").append(itemTemplate
+                                    .replace("%tag_start%", (disableLightbox ? "div" : "a"))
+                                    .replace('%tag_end%', (disableLightbox ? "div" : "a"))
+                                    .replace("%href%", (!disableLightbox ? 'href="%resized_image_link%" rel="lightbox-'+data.directory+'"' : ''))
+                                    .replace("%image%", items[i].image)
+                                    .replace("%resized_image_link%", items[i].image));
+                            }
+                            window.ajaxGridAjaxBusy = false;
+                            loader.hide();
+                        }
+                    })
+                };
+
+                if(!loaded && navItem) {
+                    callback();
+                } else if(loaded && !navItem) {
+                    callback();
+                } else if(loaded && navItem) return false;
+            };
+
+            if(enabledPagination === "1") {
+
+                let lastScrollTop = 0;
+                jQuery(window).scroll(function(e) {
+                    var st = jQuery(this).scrollTop();
+                    if (st > lastScrollTop){
+                        if(!reachedEnd && !window.ajaxGridAjaxBusy) {
+                            if (jQuery(window).scrollTop() >= (jQuery(self).offset().top + jQuery(self).outerHeight() - window.innerHeight)-80) {
+                                load(false);
+                            }
+                        }
+                    }
+
+                    lastScrollTop = st;
+                })
+            }
+        });
+    });
+})
